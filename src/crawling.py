@@ -29,25 +29,25 @@ dataset.loc[len(dataset)]=['','','', '°F', '', 'mph','', '%', 'Hg', 'mi']
 
 #START CRAWLING
 # select MONTH dropdown
-time.sleep(100)
+time.sleep(10)
 ele_month = driver.find_element(By.ID,'month')
 # ele_month = wait.until(EC.visibility_of_all_elements_located((By.ID,'month')))
 # ele_month=wait.until(EC.visibility_of_element_located(ele_month))
 select_month = Select(ele_month)
-for month in select_month.options[1:]:
+for month in select_month.options[3:]:
   time.sleep(100)
-  wait.until(EC.element_to_be_clickable(month))
+  month.click 
   month_name = month.text
   print("Selected month:", month_name)
   # wait.until(EC.visibility_of_any_elements_located((By.NAME,month.text)))
   select_month.select_by_visible_text(month_name) # Choose a  SPECIFIC month
-  month.click # Click on that month
+  # Click on that month
   # SELECT DAY DROPDOWN
   ele_day = driver.find_element(By.ID,'wt-his-select')
   # ele_day = wait.until(EC.visibility_.textof_any_elements_located((By.ID,'wt-his-select')))
   select_day = Select(ele_day)
   # Take all data of a day
-  for day in [option for option in select_day.options]:
+  for day in select_day.options[27:]:
     day_name = day.text
     print("Selected day:", day_name)
     #Find data of hours in day
