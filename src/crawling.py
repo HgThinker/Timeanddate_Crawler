@@ -29,17 +29,18 @@ dataset.loc[len(dataset)]=['','','', '°F', '', 'mph','', '%', 'Hg', 'mi']
 
 #START CRAWLING
 # select MONTH dropdown
+time.sleep(10)
 ele_month = driver.find_element(By.ID,'month')
 # ele_month = wait.until(EC.visibility_of_all_elements_located((By.ID,'month')))
 # ele_month=wait.until(EC.visibility_of_element_located(ele_month))
 select_month = Select(ele_month)
-for month in select_month.options[1:]:
-  time.sleep(50)
+for month in select_month.options[3:]:
+  time.sleep(100)
   wait.until(EC.element_to_be_clickable(month))
   month_name = month.text
   print("Selected month:", month_name)
   # wait.until(EC.visibility_of_any_elements_located((By.NAME,month.text)))
-  select_month.select_by_visible_text(month.text) # Choose a  SPECIFIC month
+  select_month.select_by_visible_text(month_name) # Choose a  SPECIFIC month
   month.click # Click on that month
   # SELECT DAY DROPDOWN
   ele_day = driver.find_element(By.ID,'wt-his-select')
@@ -77,5 +78,5 @@ for month in select_month.options[1:]:
       detail_list = [x for x in detail_list if x]
       dataset.loc[len(dataset)] = detail_list#Add new row to dataset
       count_row+=1
-
-dataset.to_csv('data/timeanddate_dataset.csv')
+      if count_row % 5 ==0:
+        dataset.to_csv('/content/drive/MyDrive/Reeco/timeanddate_dataset.csv')
