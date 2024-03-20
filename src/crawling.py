@@ -29,7 +29,7 @@ dataset.loc[len(dataset)]=['','','', '°F', '', 'mph','', '%', 'Hg', 'mi']
 
 #START CRAWLING
 # select MONTH dropdown
-time.sleep(10)
+time.sleep(100)
 ele_month = driver.find_element(By.ID,'month')
 # ele_month = wait.until(EC.visibility_of_all_elements_located((By.ID,'month')))
 # ele_month=wait.until(EC.visibility_of_element_located(ele_month))
