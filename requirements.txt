@@ -7,4 +7,4 @@ beautifulsoup4
 webdriver-manager
 chromedriver-autoinstaller
 update
-chromium-chromedriver
+chromedriver-py
