@@ -8,7 +8,7 @@ with open('README.md', encoding='utf-8') as f:
 #     license = f.read()
 
 with open('requirements.txt', encoding='utf-8') as f:
-    reqs = f.readlines()[1:]
+    reqs = f.readlines()
 
 setup(
     name = 'timeanddate_crawler',
