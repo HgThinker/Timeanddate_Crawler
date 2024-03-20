@@ -1,0 +1,8 @@
+requests
+pillow
+beautifulsoup4
+selenium
+webdriver-manager
+chromedriver-autoinstaller
+update
+chromium-chromedriver
