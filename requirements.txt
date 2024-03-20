@@ -1,5 +1,5 @@
-selenium==4.11.2;python_version<"3.8"
-selenium==4.18.1;python_version>="3.8"
+chromedriver-py==94.0.4606.41
+selenium
 requests
 setuptools
 pillow
@@ -7,4 +7,3 @@ beautifulsoup4
 webdriver-manager
 chromedriver-autoinstaller
 update
-chromedriver-py
