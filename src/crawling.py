@@ -34,7 +34,7 @@ ele_month = driver.find_element(By.ID,'month')
 # ele_month = wait.until(EC.visibility_of_all_elements_located((By.ID,'month')))
 # ele_month=wait.until(EC.visibility_of_element_located(ele_month))
 select_month = Select(ele_month)
-for month in select_month.options[3:]:
+for month in select_month.options[1:]:
   time.sleep(100)
   wait.until(EC.element_to_be_clickable(month))
   month_name = month.text
