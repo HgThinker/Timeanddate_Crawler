@@ -11,6 +11,14 @@ import pandas as pd
 import time
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+import argparse
+
+parser = argparse.ArgumentParser()
+print(sys.executable)
+
+parser.add_argument('--province_name', type=str, required=True)# Province name to search
+args = parser.parse_args()
+province_name = '-'.join(args.province_name.split().lower())
 
 #Initialize chrome web driver 
 chrome_options = webdriver.ChromeOptions()
@@ -20,12 +28,12 @@ chrome_options.add_argument('--disable-dev-shm-usage')
 driver = webdriver.Chrome(options=chrome_options)
 wait = WebDriverWait(driver, 100)
 driver.implicitly_wait(100)
-web_url = 'https://www.timeanddate.com/weather/vietnam/ho-chi-minh/historic?month=3&year=2024'
+web_url = f'https://www.timeanddate.com/weather/vietnam/{province_name}/historic'
 driver.get(web_url)
 
 #Initialize dataframe
-dataset = pd.DataFrame(columns = ['Year','Date','Time', 'Temp', 'Weather', 'Wind_speed','Wind_direct', 'Humidity', 'Barometer', 'Visibility'])
-dataset.loc[len(dataset)]=['','','', '°F', '', 'mph','', '%', 'Hg', 'mi']
+dataset = pd.DataFrame(columns = ['Province','Year','Date','Time', 'Temp', 'Weather', 'Wind_speed','Wind_direct', 'Humidity', 'Barometer', 'Visibility'])
+dataset.loc[len(dataset)]=['','','','', '°F', '', 'mph','', '%', 'Hg', 'mi']
 
 #START CRAWLING
 # select MONTH dropdown
@@ -46,7 +54,7 @@ while True:
     ele_day = driver.find_element(By.ID,'wt-his-select')
     select_day = Select(ele_day)
     # Take all data of a day
-    for day in select_day.options:
+    for day in select_day.options[1:]:
       time.sleep(2)
       day.click
       day_name = day.text
@@ -60,7 +68,7 @@ while True:
         print(element_details.text)
         children = element_details.find_elements(By.XPATH, "./*")
         # children = wait.until(EC.visibility_of_all_elements_located(By.XPATH, "./*"))
-        detail_list = [month_name.split()[1], day_name.split(', ')[0]]
+        detail_list = [province_name,month_name.split()[1], day_name.split(', ')[0]]
         count=0
         if count_row==7:# if it is the first hours, It is a special case
           detail_list.append(children[0].text.replace('°F','').replace('mph','').replace('\"Hg','').replace('%','')[:8])# cut off the first data
