@@ -47,7 +47,7 @@ while True:
     select_day = Select(ele_day)
     # Take all data of a day
     for day in select_day.options:
-      time.sleep(1)
+      time.sleep(2)
       day.click
       day_name = day.text
       print("Selected day:", day_name)
