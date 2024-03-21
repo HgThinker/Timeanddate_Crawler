@@ -35,28 +35,24 @@ while True:
     time.sleep(10)
     print("current_month_index: ", current_month_index)
     ele_month = driver.find_element(By.ID,'month')
-    # ele_month = wait.until(EC.visibility_of_all_elements_located((By.ID,'month')))
-    # ele_month=wait.until(EC.visibility_of_element_located(ele_month))
     select_month = Select(ele_month)
     month =  select_month.options[current_month_index]
     time.sleep(10)
-    month.click 
+    month.click # Click on that month
     month_name = month.text
     print("Selected month:", month_name)
-    # wait.until(EC.visibility_of_any_elements_located((By.NAME,month.text)))
     select_month.select_by_visible_text(month_name) # Choose a  SPECIFIC month
-    # Click on that month
     # SELECT DAY DROPDOWN
     ele_day = driver.find_element(By.ID,'wt-his-select')
-    # ele_day = wait.until(EC.visibility_.textof_any_elements_located((By.ID,'wt-his-select')))
     select_day = Select(ele_day)
     # Take all data of a day
     for day in select_day.options:
       time.sleep(1)
+      day.click
       day_name = day.text
       print("Selected day:", day_name)
       #Find data of hours in day
-      select_day.select_by_visible_text(day_name)
+      # day.select_by_visible_text(day_name)
       elements = wait.until(EC.visibility_of_all_elements_located((By.TAG_NAME, 'tr')))
       # elements=driver.find_elements(By.TAG_NAME,"tr")#Find all hours
       count_row=7
@@ -84,7 +80,8 @@ while True:
         dataset.loc[len(dataset)] = detail_list#Add new row to dataset
         count_row+=1
         if count_row % 5 ==0:
-          dataset.to_csv('/content/drive/MyDrive/Reeco/timeanddate_dataset.csv')
+          dataset.to_csv('/content/drive/MyDrive/Reeco/timeanddate_dataset.csv',)
     current_month_index+=1
-  except:
+  except Exception as e:
+    print(e)
     driver.get(web_url)
