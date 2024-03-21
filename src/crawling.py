@@ -18,7 +18,7 @@ print(sys.executable)
 
 parser.add_argument('--province_name', type=str, required=True)# Province name to search
 args = parser.parse_args()
-province_name = '-'.join(args.province_name.split().lower())
+province_name = '-'.join(args.province_name..lower().split())
 
 #Initialize chrome web driver 
 chrome_options = webdriver.ChromeOptions()
