@@ -98,7 +98,7 @@ while True:
         dataset.loc[len(dataset)] = detail_list#Add new row to dataset
         count_row+=1
         if count_row % 5 ==0:
-          dataset.to_csv(f'/content/drive/MyDrive/Reeco/timeanddate_dataset_{province_name}.csv',)
+          dataset.to_csv(f'/kaggle/working/Timeanddate_Crawler/timeanddate_dataset_{province_name}.csv',)
     current_month_index+=1
   except Exception as e:
     print(e)
