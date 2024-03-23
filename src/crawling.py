@@ -38,12 +38,12 @@ dataset.loc[len(dataset)]=['','','','', '°F', '', 'mph','', '%', 'Hg', 'mi']
 
 #START CRAWLING
 # select MONTH dropdown
-current_month_index=45
+current_month_index=1
 current_month_name = ''
 number_of_month=0
 ran = False
 while True:
-  if current_month_index == (number_of_month + 1):
+  if current_month_index == (44 + 1):
     break
   try:
     time.sleep(10)
