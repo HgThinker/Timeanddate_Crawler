@@ -34,7 +34,7 @@ days = args.days
 
 
 pd.set_option("display.width",None)
-dir_path = os.path.join(os.getcwd(),'data\Meteostat')
+dir_path = os.path.join(os.getcwd(),'data/Meteostat')
 os.chdir(dir_path)
 
 
