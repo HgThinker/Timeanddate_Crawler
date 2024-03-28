@@ -121,8 +121,10 @@ def crawl_meteostat_data(province_name, days):
               inputElement = driver.find_element(By.XPATH, "//*[@id='search']")
               inputElement.click()#click on search text box
               #Searching
+              print("Province:",province_name_type)
               inputElement.send_keys(province_name_type)
-              #Get first result
+              #Get first resuls
+              time.sleep(2)
               results = driver.find_elements(By.XPATH,"//*[@id='app']/div/div[2]/nav/div/div[1]/div/a[1]")
               if len(results)==0:
                 print("Province unsearchable!!!")
