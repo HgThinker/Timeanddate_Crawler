@@ -123,7 +123,7 @@ def crawl_meteostat_data(province_name, days):
             inputElement.send_keys(province_name_type)
             #Get first result
             results = driver.find_elements(By.XPATH,"//*[@id='app']/div/div[2]/nav/div/div[1]/div/a[1]")
-            time.sleep(3)
+            time.sleep(5)
             if len(results)==0:
               print("Province unsearchable!!!")
               num_unsearchable+=1
@@ -132,7 +132,7 @@ def crawl_meteostat_data(province_name, days):
             new_province_name=unidecode.unidecode(province_name_type).lower().replace(" ", "")
             found_province=False
             for result in results:
-              if unidecode.unidecode(result.text).lower().replace(" ", "") == new_province_name:
+              if unidecode.unidecode(result.text).lower().replace(" ", "") == new_province_name or unidecode.unidecode(result.text).lower().replace(" ", "") == new_province_name+''+'city' :
                 result.click()
                 found_province=True
                 break
@@ -158,7 +158,7 @@ def crawl_meteostat_data(province_name, days):
           driver.get(new_page_url) # access the result website
           print(driver.current_url)
           wait.until(EC.element_to_be_clickable((By.XPATH,"//*[@id='cookieModal']/div/div/div[3]/button[1]"))).click()#Click the reject cookie button
-          time.sleep(2)
+          time.sleep(1)
           province_name_type=unidecode.unidecode(province_name_type).lower().replace(" ", "")#remove space from province_name_type
           download_csv(dir_path,f'{province_name_type}-{remain_days}',wait,driver)# Download the result csv file
           hold_date = start_date
