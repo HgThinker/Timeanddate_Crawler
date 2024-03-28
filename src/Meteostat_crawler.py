@@ -75,7 +75,7 @@ def merge_csv(province_name):
   province_dataset_path = os.path.join(dir_path,province_name)
   csv_files = glob.glob(f'{province_dataset_path}*.csv')# Get all .csv file that contain province_name in its name
   if len(csv_files)>1:# If we found more than 1 file, we need to concatenate them together
-    df_csv_concat = pd.concat([pd.read_csv(file) for file in csv_files], ignore_index=True).sort_values(by='date').reset_index(drop=True)
+    df_csv_concat = pd.concat([pd.read_csv(file) for file in csv_files], ignore_index=True).sort_values(by='time').reset_index(drop=True)
     df_csv_concat.to_csv(f'{dir_path}/meteostat_dataset_{province_name}.csv')
   else:# If not, just rename it
     shutil.copyfile(csv_files[0],f'{dir_path}/meteostat_dataset_{province_name}.csv')
