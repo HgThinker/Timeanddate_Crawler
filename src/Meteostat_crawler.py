@@ -139,6 +139,7 @@ def crawl_meteostat_data(province_name, days):
             start_date = end_date - timedelta(days=min(7,remain_days)-1)
             print("From ",start_date,"to ",end_date )
             #Get the url to the result window
+            print('Search result page:',driver.current_url)
             new_page_url = driver.current_url.split('?')[0]+f'?t={start_date}/{end_date}'
             # driver.get_screenshot_as_file("/content/screenshot.png")
             driver.close()
