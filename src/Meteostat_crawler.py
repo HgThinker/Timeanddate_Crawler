@@ -128,8 +128,8 @@ def crawl_meteostat_data(province_name, days):
                 break        
               # print(len(first_result))
               results[0].click()#click on first result
-              time.sleep(2)
               #Switch to the result window
+              wait.until(EC.new_window_is_opened(driver.window_handles))  
               window_after = driver.window_handles[0]
               driver.switch_to.window(window_after)
               end_date = date.today()#So the end day would be today
