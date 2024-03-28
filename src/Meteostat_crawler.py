@@ -122,17 +122,18 @@ def crawl_meteostat_data(province_name, days):
             #Searching
             inputElement.send_keys(province_name_type)
             #Get first result
-            results = driver.find_elements(By.XPATH,"//*[@id='app']/div/div[2]/nav/div/div[1]/div/a[1]")
-            time.sleep(5)
+            results = wait.until(EC.visibility_of_all_elements_located((By.XPATH,"//*[@id='cookieModal']/div/div/div[3]/button[1]")))
             if len(results)==0:
               print("Province unsearchable!!!")
               num_unsearchable+=1
-              break        
+              break
             # print(len(first_result))
             new_province_name=unidecode.unidecode(province_name_type).lower().replace(" ", "")
             found_province=False
             for result in results:
-              if unidecode.unidecode(result.text).lower().replace(" ", "") == new_province_name or unidecode.unidecode(result.text).lower().replace(" ", "") == new_province_name+''+'city' :
+              preprocessed_result = unidecode.unidecode(result.text).lower().replace(" ", "")
+              print(preprocessed_result)
+              if preprocessed_result == new_province_name or preprocessed_result == new_province_name+'city' :
                 result.click()
                 found_province=True
                 break
@@ -140,7 +141,7 @@ def crawl_meteostat_data(province_name, days):
               print("No result matched!!!")
               break
             #Switch to the result window
-            wait.until(EC.new_window_is_opened(driver.window_handles))  
+            wait.until(EC.new_window_is_opened(driver.window_handles))
             window_after = driver.window_handles[0]
             driver.switch_to.window(window_after)
             end_date = date.today()#So the end day would be today
