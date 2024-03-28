@@ -91,11 +91,11 @@ def crawl_meteostat_data(province_name, days):
   # - With space between letters: ho chi minh
   # province name need to be in lowercase, and need to be removed Vietnamese Accents
   province_name_types=[province_name,''.join(unidecode.unidecode(province_name).split()).lower(),unidecode.unidecode(province_name).lower()]
-  continual_error=0
   num_unsearchable=0
   success= False #We only need 1 time succeed
-  while (not success) and (continual_error<3) and (num_unsearchable<3):# search until we succeed or we get 5 errors
+  while (not success) and (num_unsearchable<3):# search until we succeed or we get 5 errors
     for province_name_type in province_name_types:# Search with 3 ways
+      continual_error=0
       ran = False
       start_date='' #The start day of our historical data
       end_date=''   #The end day of our historical data
@@ -106,7 +106,7 @@ def crawl_meteostat_data(province_name, days):
       driver,wait = Initialize_driver()#Innitial driver
       search_url = 'https://meteostat.net/en/'
       driver.get(search_url)  # Get the website
-      while remain_days > 0:#Loop until we get all days of data
+      while remain_days > 0 and (continual_error<3):#Loop until we get all days of data
         print('Number of countinual error:',continual_error,"\tNumber of Unsearchable times:",num_unsearchable)
         print("Remain days:", remain_days)
         try:#we may get error, when it does we need to start again
@@ -120,8 +120,8 @@ def crawl_meteostat_data(province_name, days):
               #Searching
               inputElement.send_keys(province_name_type)
               #Get first result
-              time.sleep(3)
               results = driver.find_elements(By.XPATH,"//*[@id='app']/div/div[2]/nav/div/div[1]/div/a[1]")
+              time.sleep(3)
               if len(results)==0:
                 print("Province unsearchable!!!")
                 num_unsearchable+=1
