@@ -91,13 +91,10 @@ def crawl_meteostat_data(province_name, days):
   # - With space between letters: ho chi minh
   # province name need to be in lowercase, and need to be removed Vietnamese Accents
   province_name_types=[province_name,''.join(unidecode.unidecode(province_name).split()).lower(),unidecode.unidecode(province_name).lower()]
-  num_Element_error=0 #This occurs when an element in the website can not be select, maybe a unpredictable ads pop up that block all element
-  num_Index_error=0 #This occurs when there is no more data to crawl
-  num_unsearchable=0 # This occrur when you are not be able to search the province name
-  max_num_Index_error=10
-  max_num_Element_error=int(max(days/100,5))
+  continual_error=0
+  num_unsearchable=0
   success= False #We only need 1 time succeed
-  while (not success) and (num_Index_error<max_num_Index_error) and (num_Element_error<max_num_Element_error) and (num_unsearchable<3):# search until we succeed or we get 5 errors
+  while (not success) and (continual_error<3) and (num_unsearchable<3):# search until we succeed or we get 5 errors
     for province_name_type in province_name_types:# Search with 3 ways
       ran = False
       start_date='' #The start day of our historical data
@@ -110,7 +107,7 @@ def crawl_meteostat_data(province_name, days):
       search_url = 'https://meteostat.net/en/'
       driver.get(search_url)  # Get the website
       while remain_days > 0:#Loop until we get all days of data
-        print('Number of Index error:',num_Index_error,"\tNumber of Element error",num_Element_error,"\tNumber of Unsearchable times:",num_unsearchable)
+        print('Number of countinual error:',continual_error,"\tNumber of Unsearchable times:",num_unsearchable)
         print("Remain days:", remain_days)
         try:#we may get error, when it does we need to start again
             if not ran:#If this is the first time we access https://meteostat.net/en/ in a specific way of searching
@@ -121,11 +118,10 @@ def crawl_meteostat_data(province_name, days):
               inputElement = driver.find_element(By.XPATH, "//*[@id='search']")
               inputElement.click()#click on search text box
               #Searching
-              print("Province:",province_name_type)
               inputElement.send_keys(province_name_type)
-              #Get first resuls
-              time.sleep(2)
+              #Get first result
               results = driver.find_elements(By.XPATH,"//*[@id='app']/div/div[2]/nav/div/div[1]/div/a[1]")
+              time.sleep(1)
               if len(results)==0:
                 print("Province unsearchable!!!")
                 num_unsearchable+=1
@@ -157,20 +153,21 @@ def crawl_meteostat_data(province_name, days):
             province_name_type=unidecode.unidecode(province_name_type).lower().replace(" ", "")#remove space from province_name_type
             download_csv(dir_path,f'{province_name_type}-{remain_days}',wait,driver)# Download the result csv file
             hold_date = start_date
+            continual_error=0
             remain_days-= 7 #update the remain_days after we search
         except Exception as err:
             print(f"{type(err).__name__} was raised: {err}")#print the error
-            if type(err).__name__=='ElementClickInterceptedException':
-              num_Element_error+=1
-            if type(err).__name__=='IndexError':
-              num_Index_error+=1
-            if type(err).__name__=='TimeoutException':
-              break
+            # if type(err).__name__=='ElementClickInterceptedException':
+            #   num_Element_error+=1
+            # if type(err).__name__=='IndexError':
+            #   num_Index_error+=1
+            # if type(err).__name__=='TimeoutException':
+            #   break
             start_date = hold_date
+            continual_error+=1
       if remain_days <=0:
         success=True #mark that we succeed
         break
   time.sleep(10)
   merge_csv(unidecode.unidecode(province_name).lower().replace(" ", ""))# merge all csv file belonged to the same province after we search
-
 crawl_meteostat_data(province_name,days)# crawl 20 years = 7305 days
