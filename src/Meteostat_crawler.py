@@ -89,18 +89,18 @@ def crawl_meteostat_data(province_name, days):
   # - With space between letters: ho chi minh
   # province name need to be in lowercase, and need to be removed Vietnamese Accents
   province_name_types=[province_name,''.join(unidecode.unidecode(province_name).split()).lower(),unidecode.unidecode(province_name).lower()]
-  num_Element_error=0
-  num_Index_error=0
+  num_Element_error=0 #This occurs when an element in the website can not be select, maybe a unpredictable ads pop up that block all element
+  num_Index_error=0 #This occurs when there is no more data to crawl
+  num_unsearchable=0 # This occrur when you are not be able to search the province name
   max_num_Index_error=10
-  max_num_Element_error=int(max(days/10,5))
+  max_num_Element_error=int(max(days/100,5))
   success= False #We only need 1 time succeed
-  while (not success) and (num_Index_error<max_num_Index_error) and (num_Element_error<max_num_Element_error):# search until we succeed or we get 5 errors
-    print('Number of Index error:',num_Index_error,"\tNumber of Element error",num_Element_error)
+  while (not success) and (num_Index_error<max_num_Index_error) and (num_Element_error<max_num_Element_error) and (num_unsearchable<3):# search until we succeed or we get 5 errors
     for province_name_type in province_name_types:# Search with 3 ways
       ran = False
       start_date='' #The start day of our historical data
       end_date=''   #The end day of our historical data
-
+      hold_date=date.today()  #This will hold the start day everytime you get error
       # The maximum of every search is about 10 years
       # Show if we search more than 10 years, we need to search more than 1 time
       remain_days = days# The day remain after every time we search
@@ -108,10 +108,10 @@ def crawl_meteostat_data(province_name, days):
       search_url = 'https://meteostat.net/en/'
       driver.get(search_url)  # Get the website
       while remain_days > 0:#Loop until we get all days of data
+        print('Number of Index error:',num_Index_error,"\tNumber of Element error",num_Element_error,"\tNumber of Unsearchable times:",num_unsearchable)
         print("Remain days:", remain_days)
         try:#we may get error, when it does we need to start again
             if not ran:#If this is the first time we access https://meteostat.net/en/ in a specific way of searching
-              end_date = date.today()#So the end day would be today
               ran =True
               #Click on reject cookie button
               wait.until(EC.element_to_be_clickable((By.XPATH,"//*[@id='cookieModal']/div/div/div[3]/button[1]"))).click()
@@ -121,14 +121,20 @@ def crawl_meteostat_data(province_name, days):
               #Searching
               inputElement.send_keys(province_name_type)
               #Get first result
-              first_result = driver.find_elements(By.XPATH,"//*[@id='app']/div/div[2]/nav/div/div[1]/div/a[1]")[0]
-              first_result.click()
+              results = driver.find_elements(By.XPATH,"//*[@id='app']/div/div[2]/nav/div/div[1]/div/a[1]")
+              if len(results)==0:
+                print("Province unsearchable!!!")
+                num_unsearchable+=1
+                break        
+              # print(len(first_result))
+              results[0].click()#click on first result
               time.sleep(2)
               #Switch to the result window
               window_after = driver.window_handles[0]
               driver.switch_to.window(window_after)
+              end_date = date.today()#So the end day would be today
             else:
-              end_date = start_date# If this is not the first time, the end_date is to continue the last start day we searched
+              end_date = start_date - timedelta(days=1)# If this is not the first time, the end_date is to continue the last start day we searched
             #The search range is 7 days or less
             start_date = end_date - timedelta(days=min(7,remain_days)-1)
             print("From ",start_date,"to ",end_date )
@@ -145,6 +151,7 @@ def crawl_meteostat_data(province_name, days):
             time.sleep(2)
             province_name_type=unidecode.unidecode(province_name_type).lower().replace(" ", "")#remove space from province_name_type
             download_csv(dir_path,f'{province_name_type}-{remain_days}',wait,driver)# Download the result csv file
+            hold_date = start_date
             remain_days-= 7 #update the remain_days after we search
         except Exception as err:
             print(f"{type(err).__name__} was raised: {err}")#print the error
@@ -152,12 +159,13 @@ def crawl_meteostat_data(province_name, days):
               num_Element_error+=1
             if type(err).__name__=='IndexError':
               num_Index_error+=1
-            start_date+= timedelta(days=7)
-            remain_days+=7
+            if type(err).__name__=='TimeoutException':
+              break
+            start_date = hold_date
       if remain_days <=0:
-        time.sleep(10)
-        merge_csv(province_name_type)# merge all csv file belonged to the same province after we search
         success=True #mark that we succeed
         break
+  time.sleep(10)
+  merge_csv(unidecode.unidecode(province_name).lower().replace(" ", ""))# merge all csv file belonged to the same province after we search
 
 crawl_meteostat_data(province_name,days)# crawl 20 years = 7305 days
