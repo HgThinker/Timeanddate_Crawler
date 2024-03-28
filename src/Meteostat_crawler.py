@@ -77,8 +77,10 @@ def merge_csv(province_name):
   if len(csv_files)>1:# If we found more than 1 file, we need to concatenate them together
     df_csv_concat = pd.concat([pd.read_csv(file) for file in csv_files], ignore_index=True).sort_values(by='time').reset_index(drop=True)
     df_csv_concat.to_csv(f'{dir_path}/meteostat_dataset_{province_name}.csv')
-  else:# If not, just rename it
+  elif len(csv_files)==1:# If only 1 file, just rename it
     shutil.copyfile(csv_files[0],f'{dir_path}/meteostat_dataset_{province_name}.csv')
+  else: # If there is no file, return 
+    return
   for csv_file in csv_files:# Remove all file we found
     os.remove(csv_file)
 
