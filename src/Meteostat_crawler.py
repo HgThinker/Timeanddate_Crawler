@@ -48,8 +48,8 @@ def Initialize_driver():
   chrome_options.add_argument("--disable-extensions")
   chrome_options.add_argument("--window-size=1366x768") # this should be your screen size
   driver = webdriver.Chrome(options=chrome_options)
-  wait = WebDriverWait(driver, 20)
-  driver.implicitly_wait(20)
+  wait = WebDriverWait(driver, 50)
+  driver.implicitly_wait(50)
   return driver,wait
 
 def download_csv(dir_path,province_name,wait,driver):
