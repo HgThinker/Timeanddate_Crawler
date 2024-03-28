@@ -93,80 +93,84 @@ def crawl_meteostat_data(province_name, days):
   province_name_types=[province_name,''.join(unidecode.unidecode(province_name).split()).lower(),unidecode.unidecode(province_name).lower()]
   num_unsearchable=0
   success= False #We only need 1 time succeed
-  while (not success) and (num_unsearchable<3):# search until we succeed or we get 5 errors
-    for province_name_type in province_name_types:# Search with 3 ways
-      continual_error=0
-      ran = False
-      start_date='' #The start day of our historical data
-      end_date=''   #The end day of our historical data
-      hold_date=date.today()  #This will hold the start day everytime you get error
-      # The maximum of every search is about 10 years
-      # Show if we search more than 10 years, we need to search more than 1 time
-      remain_days = days# The day remain after every time we search
-      driver,wait = Initialize_driver()#Innitial driver
-      search_url = 'https://meteostat.net/en/'
-      driver.get(search_url)  # Get the website
-      while remain_days > 0 and (continual_error<3):#Loop until we get all days of data
-        print('Number of countinual error:',continual_error,"\tNumber of Unsearchable times:",num_unsearchable)
-        print("Remain days:", remain_days)
-        try:#we may get error, when it does we need to start again
-            if not ran:#If this is the first time we access https://meteostat.net/en/ in a specific way of searching
-              ran =True
-              #Click on reject cookie button
-              wait.until(EC.element_to_be_clickable((By.XPATH,"//*[@id='cookieModal']/div/div/div[3]/button[1]"))).click()
-              #Find search text box
-              inputElement = driver.find_element(By.XPATH, "//*[@id='search']")
-              inputElement.click()#click on search text box
-              #Searching
-              inputElement.send_keys(province_name_type)
-              #Get first result
-              results = driver.find_elements(By.XPATH,"//*[@id='app']/div/div[2]/nav/div/div[1]/div/a[1]")
-              time.sleep(3)
-              if len(results)==0:
-                print("Province unsearchable!!!")
-                num_unsearchable+=1
-                break        
-              # print(len(first_result))
-              results[0].click()#click on first result
-              #Switch to the result window
-              wait.until(EC.new_window_is_opened(driver.window_handles))  
-              window_after = driver.window_handles[0]
-              driver.switch_to.window(window_after)
-              end_date = date.today()#So the end day would be today
-            else:
-              end_date = start_date - timedelta(days=1)# If this is not the first time, the end_date is to continue the last start day we searched
-            #The search range is 7 days or less
-            start_date = end_date - timedelta(days=min(7,remain_days)-1)
-            print("From ",start_date,"to ",end_date )
-            #Get the url to the result window
-            new_page_url = driver.current_url.split('?')[0]+f'?t={start_date}/{end_date}'
-            # driver.get_screenshot_as_file("/content/screenshot.png")
-            driver.close()
-            driver.quit()
-            #Incase of getting error: Max retries exceeded, we need to close and reinitalize the driver
-            driver,wait = Initialize_driver()
-            driver.get(new_page_url) # access the result website
-            print(driver.current_url)
-            wait.until(EC.element_to_be_clickable((By.XPATH,"//*[@id='cookieModal']/div/div/div[3]/button[1]"))).click()#Click the reject cookie button
-            time.sleep(2)
-            province_name_type=unidecode.unidecode(province_name_type).lower().replace(" ", "")#remove space from province_name_type
-            download_csv(dir_path,f'{province_name_type}-{remain_days}',wait,driver)# Download the result csv file
-            hold_date = start_date
-            continual_error=0
-            remain_days-= 7 #update the remain_days after we search
-        except Exception as err:
-            print(f"{type(err).__name__} was raised: {err}")#print the error
-            # if type(err).__name__=='ElementClickInterceptedException':
-            #   num_Element_error+=1
-            # if type(err).__name__=='IndexError':
-            #   num_Index_error+=1
-            # if type(err).__name__=='TimeoutException':
-            #   break
-            start_date = hold_date
-            continual_error+=1
-      if remain_days <=0:
-        success=True #mark that we succeed
-        break
+  # while (not success) and (num_unsearchable<3):# search until we succeed or we get 5 errors
+  for province_name_type in province_name_types:# Search with 3 ways
+    if num_unsearchable==3:
+      break
+    continual_error=0
+    ran = False
+    start_date='' #The start day of our historical data
+    end_date=''   #The end day of our historical data
+    hold_date=date.today()  #This will hold the start day everytime you get error
+    # The maximum of every search is about 10 years
+    # Show if we search more than 10 years, we need to search more than 1 time
+    remain_days = days# The day remain after every time we search
+    driver,wait = Initialize_driver()#Innitial driver
+    search_url = 'https://meteostat.net/en/'
+    driver.get(search_url)  # Get the website
+    while remain_days > 0 and (continual_error<3):#Loop until we get all days of data
+      print('Number of countinual error:',continual_error,"\tNumber of Unsearchable times:",num_unsearchable)
+      print("Remain days:", remain_days)
+      try:#we may get error, when it does we need to start again
+          if not ran:#If this is the first time we access https://meteostat.net/en/ in a specific way of searching
+            ran =True
+            #Click on reject cookie button
+            wait.until(EC.element_to_be_clickable((By.XPATH,"//*[@id='cookieModal']/div/div/div[3]/button[1]"))).click()
+            #Find search text box
+            inputElement = driver.find_element(By.XPATH, "//*[@id='search']")
+            inputElement.click()#click on search text box
+            #Searching
+            inputElement.send_keys(province_name_type)
+            #Get first result
+            results = driver.find_elements(By.XPATH,"//*[@id='app']/div/div[2]/nav/div/div[1]/div/a[1]")
+            time.sleep(3)
+            if len(results)==0:
+              print("Province unsearchable!!!")
+              num_unsearchable+=1
+              break        
+            # print(len(first_result))
+            new_province_name=unidecode.unidecode(province_name_type).lower().replace(" ", "")
+            found_province=False
+            for result in results:
+              if unidecode.unidecode(result.text).lower().replace(" ", "") == new_province_name:
+                result.click()
+                found_province=True
+                break
+            if not found_province:
+              print("No result matched!!!")
+              break
+            #Switch to the result window
+            wait.until(EC.new_window_is_opened(driver.window_handles))  
+            window_after = driver.window_handles[0]
+            driver.switch_to.window(window_after)
+            end_date = date.today()#So the end day would be today
+          else:
+            end_date = start_date - timedelta(days=1)# If this is not the first time, the end_date is to continue the last start day we searched
+          #The search range is 7 days or less
+          start_date = end_date - timedelta(days=min(7,remain_days)-1)
+          print("From ",start_date,"to ",end_date )
+          new_page_url = driver.current_url.split('?')[0]+f'?t={start_date}/{end_date}'
+          # driver.get_screenshot_as_file("/content/screenshot.png")
+          driver.close()
+          driver.quit()
+          #Incase of getting error: Max retries exceeded, we need to close and reinitalize the driver
+          driver,wait = Initialize_driver()
+          driver.get(new_page_url) # access the result website
+          print(driver.current_url)
+          wait.until(EC.element_to_be_clickable((By.XPATH,"//*[@id='cookieModal']/div/div/div[3]/button[1]"))).click()#Click the reject cookie button
+          time.sleep(2)
+          province_name_type=unidecode.unidecode(province_name_type).lower().replace(" ", "")#remove space from province_name_type
+          download_csv(dir_path,f'{province_name_type}-{remain_days}',wait,driver)# Download the result csv file
+          hold_date = start_date
+          continual_error=0
+          remain_days-= 7 #update the remain_days after we search
+      except Exception as err:
+          print(f"{type(err).__name__} was raised: {err}")#print the error
+          start_date = hold_date
+          continual_error+=1
+    if remain_days <=0:
+      # success=True #mark that we succeed
+      break
   time.sleep(10)
   merge_csv(unidecode.unidecode(province_name).lower().replace(" ", ""))# merge all csv file belonged to the same province after we search
 crawl_meteostat_data(province_name,days)# crawl 20 years = 7305 days
