@@ -137,7 +137,7 @@ def crawl_meteostat_data(province_name, days):
             if not found_province:
               print("No result matched!!!")
               break
-            if(driver.current_url=='https://meteostat.net/en/#google_vignette'):
+            if(driver.current_url=='https://meteostat.net/en/#google_vignette' or driver.current_url=='https://meteostat.net/en/'):
               print('Run from the begining!!!')
               driver.get(search_url) 
               ran=False
