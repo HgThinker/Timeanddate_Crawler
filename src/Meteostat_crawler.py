@@ -95,8 +95,6 @@ def crawl_meteostat_data(province_name, days):
   success= False #We only need 1 time succeed
   # while (not success) and (num_unsearchable<3):# search until we succeed or we get 5 errors
   for province_name_type in province_name_types:# Search with 3 ways
-    if num_unsearchable==3:
-      break
     continual_error=0
     ran = False
     start_date='' #The start day of our historical data
@@ -108,7 +106,7 @@ def crawl_meteostat_data(province_name, days):
     driver,wait = Initialize_driver()#Innitial driver
     search_url = 'https://meteostat.net/en/'
     driver.get(search_url)  # Get the website
-    while remain_days > 0 and (continual_error<5):#Loop until we get all days of data
+    while remain_days > 0 and (continual_error<3):#Loop until we get all days of data
       print('Number of countinual error:',continual_error,"\tNumber of Unsearchable times:",num_unsearchable)
       print("Remain days:", remain_days)
       try:#we may get error, when it does we need to start again
@@ -116,7 +114,6 @@ def crawl_meteostat_data(province_name, days):
             ran =True
             #Click on reject cookie button
             wait.until(EC.element_to_be_clickable((By.XPATH,"//*[@id='cookieModal']/div/div/div[3]/button[1]"))).click()
-            #Find search text box
             inputElement = wait.until(EC.element_to_be_clickable((By.XPATH, "//*[@id='search']")))
             inputElement.click()#click on search text box
             #Searching
@@ -126,7 +123,6 @@ def crawl_meteostat_data(province_name, days):
             results = search_box.find_elements(By.XPATH,"./child::*")
             if len(results)==0:
               print("Province unsearchable!!!")
-              num_unsearchable+=1
               break
             # print(len(first_result))
             new_province_name=unidecode.unidecode(province_name_type).lower().replace(" ", "")
@@ -134,18 +130,20 @@ def crawl_meteostat_data(province_name, days):
             for result in results:
               preprocessed_result = unidecode.unidecode(result.text).lower().replace(" ", "")
               if preprocessed_result == new_province_name or preprocessed_result == new_province_name+'city' :
-                result.click()
+                driver.execute_script("arguments[0].click();", result)
+                print("Result click!!")
                 found_province=True
                 break
             if not found_province:
               print("No result matched!!!")
               break
-            #Switch to the result window
-            wait.until(EC.new_window_is_opened(driver.window_handles))
-            window_after = driver.window_handles[0]
-            driver.switch_to.window(window_after)
-            print(driver.current_url)
+            if(driver.current_url=='https://meteostat.net/en/#google_vignette'):
+              print('Run from the begining!!!')
+              driver.get(search_url) 
+              ran=False
+              continue
             end_date = date.today()#So the end day would be today
+            driver.get_screenshot_as_file("/content/screenshot.png")
           else:
             end_date = start_date - timedelta(days=1)# If this is not the first time, the end_date is to continue the last start day we searched
           #The search range is 7 days or less
