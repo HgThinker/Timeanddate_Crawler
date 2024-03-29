@@ -121,7 +121,6 @@ def crawl_meteostat_data(province_name, days):
             #Get first result            
             search_box= wait.until(EC.presence_of_element_located((By.XPATH,"//*[@id='app']/div/div[2]/nav/div/div[1]/div")))
             results = search_box.find_elements(By.XPATH,"./child::*")
-            timesleep(3)
             if len(results)==0:
               print("Province unsearchable!!!")
               break
@@ -151,6 +150,7 @@ def crawl_meteostat_data(province_name, days):
           start_date = end_date - timedelta(days=min(7,remain_days)-1)
           print("From ",start_date,"to ",end_date )
           new_page_url = driver.current_url.split('?')[0]+f'?t={start_date}/{end_date}'
+          if 'vn'not in new_page_url: break
           # driver.get_screenshot_as_file("/content/screenshot.png")
           driver.close()
           driver.quit()
