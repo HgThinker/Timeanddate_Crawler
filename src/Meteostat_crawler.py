@@ -108,7 +108,7 @@ def crawl_meteostat_data(province_name, days):
     driver,wait = Initialize_driver()#Innitial driver
     search_url = 'https://meteostat.net/en/'
     driver.get(search_url)  # Get the website
-    while remain_days > 0 and (continual_error<3):#Loop until we get all days of data
+    while remain_days > 0 and (continual_error<5):#Loop until we get all days of data
       print('Number of countinual error:',continual_error,"\tNumber of Unsearchable times:",num_unsearchable)
       print("Remain days:", remain_days)
       try:#we may get error, when it does we need to start again
@@ -117,12 +117,13 @@ def crawl_meteostat_data(province_name, days):
             #Click on reject cookie button
             wait.until(EC.element_to_be_clickable((By.XPATH,"//*[@id='cookieModal']/div/div/div[3]/button[1]"))).click()
             #Find search text box
-            inputElement = driver.find_element(By.XPATH, "//*[@id='search']")
+            inputElement = wait.until(EC.element_to_be_clickable((By.XPATH, "//*[@id='search']")))
             inputElement.click()#click on search text box
             #Searching
             inputElement.send_keys(province_name_type)
-            #Get first result
-            results = wait.until(EC.visibility_of_all_elements_located((By.XPATH,"//*[@id='cookieModal']/div/div/div[3]/button[1]")))
+            #Get first result            
+            search_box= wait.until(EC.presence_of_element_located((By.XPATH,"//*[@id='app']/div/div[2]/nav/div/div[1]/div")))
+            results = search_box.find_elements(By.XPATH,"./child::*")
             if len(results)==0:
               print("Province unsearchable!!!")
               num_unsearchable+=1
@@ -132,7 +133,6 @@ def crawl_meteostat_data(province_name, days):
             found_province=False
             for result in results:
               preprocessed_result = unidecode.unidecode(result.text).lower().replace(" ", "")
-              print(preprocessed_result)
               if preprocessed_result == new_province_name or preprocessed_result == new_province_name+'city' :
                 result.click()
                 found_province=True
@@ -144,6 +144,7 @@ def crawl_meteostat_data(province_name, days):
             wait.until(EC.new_window_is_opened(driver.window_handles))
             window_after = driver.window_handles[0]
             driver.switch_to.window(window_after)
+            print(driver.current_url)
             end_date = date.today()#So the end day would be today
           else:
             end_date = start_date - timedelta(days=1)# If this is not the first time, the end_date is to continue the last start day we searched
