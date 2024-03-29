@@ -121,6 +121,7 @@ def crawl_meteostat_data(province_name, days):
             #Get first result            
             search_box= wait.until(EC.presence_of_element_located((By.XPATH,"//*[@id='app']/div/div[2]/nav/div/div[1]/div")))
             results = search_box.find_elements(By.XPATH,"./child::*")
+            timesleep(3)
             if len(results)==0:
               print("Province unsearchable!!!")
               break
