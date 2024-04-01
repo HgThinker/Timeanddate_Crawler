@@ -33,8 +33,8 @@ web_url = f'https://www.timeanddate.com/weather/vietnam/{province_name}/historic
 driver.get(web_url)
 
 #Initialize dataframe
-dataset = pd.DataFrame(columns = ['Province','Year','Date','Time', 'Temp', 'Weather', 'Wind_speed','Wind_direct', 'Humidity', 'Barometer', 'Visibility'])
-dataset.loc[len(dataset)]=['','','','', '°F', '', 'mph','', '%', 'Hg', 'mi']
+dataset = pd.DataFrame(columns = ['Year','Date','Time', 'Temp', 'Weather', 'Wind_speed','Wind_direct', 'Humidity', 'Barometer', 'Visibility'])
+dataset.loc[len(dataset)]=['','','', '°F', '', 'mph','', '%', 'Hg', 'mi']
 
 #START CRAWLING
 # select MONTH dropdown
@@ -80,7 +80,7 @@ while True:
         print(element_details.text)
         children = element_details.find_elements(By.XPATH, "./*")
         # children = wait.until(EC.visibility_of_all_elements_located(By.XPATH, "./*"))
-        detail_list = [province_name,current_month_name.split()[1], day_name.split(', ')[0]]
+        detail_list = [current_month_name.split()[1], day_name.split(', ')[0]]
         count=0
         if count_row==7:# if it is the first hours, It is a special case
           detail_list.append(children[0].text.replace('°F','').replace('mph','').replace('\"Hg','').replace('%','')[:8])# cut off the first data
