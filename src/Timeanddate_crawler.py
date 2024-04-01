@@ -42,6 +42,8 @@ current_month_index=1
 current_month_name = ''
 number_of_month=0
 ran = False
+os.mkdir(os.path.join(os.getcwd(),'data')) 
+dir_path = os.path.join(os.getcwd(),'data')
 while True:
   if current_month_index == number_of_month+1:
     break
@@ -98,7 +100,7 @@ while True:
         dataset.loc[len(dataset)] = detail_list#Add new row to dataset
         count_row+=1
         if count_row % 5 ==0:
-          dataset.to_csv(f'/kaggle/working/Timeanddate_Crawler/timeanddate_dataset_{province_name}.csv',)
+          dataset.to_csv(os.path.join(dir_path,f'timeanddate_dataset_{province_name}.csv'))
     current_month_index+=1
   except Exception as e:
     print(e)
