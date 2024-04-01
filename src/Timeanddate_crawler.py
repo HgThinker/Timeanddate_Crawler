@@ -43,7 +43,7 @@ current_month_name = ''
 number_of_month=0
 ran = False
 while True:
-  if current_month_index == (44 + 1):
+  if current_month_index == number_of_month+1:
     break
   try:
     time.sleep(10)
