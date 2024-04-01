@@ -45,8 +45,6 @@ ran = False
 os.mkdir(os.path.join(os.getcwd(),'data')) 
 dir_path = os.path.join(os.getcwd(),'data')
 while True:
-  if current_month_index == number_of_month+1:
-    break
   try:
     time.sleep(10)
     print("current_month_index: ", current_month_index)
@@ -105,4 +103,5 @@ while True:
   except Exception as e:
     print(e)
     driver.get(web_url)
-
+  if current_month_index == number_of_month:
+    break
