@@ -1,10 +1,5 @@
-import requests
-import PIL
-from bs4 import BeautifulSoup
 from selenium import webdriver
 from selenium.webdriver.common.by import By
-from webdriver_manager.chrome import ChromeDriverManager
-from selenium.webdriver.support.ui import Select
 import pandas as pd
 import time
 from selenium.webdriver.support.wait import WebDriverWait
@@ -30,7 +25,8 @@ def preprocess_province_name(province_name):
     "Hà Nội", "Hồ Chí Minh", "Đà Nẵng", "Hải Dương"]
     new_province_name = unidecode.unidecode(province_name).lower().replace(" ", "")
     for province in provinces:
-      if unidecode.unidecode(province).lower().replace(" ", "") == new_province_name:
+      element_province_name =unidecode.unidecode(province).lower().replace(" ", "")
+      if element_province_name == new_province_name:
         return province
 
 parser = argparse.ArgumentParser()
@@ -75,7 +71,7 @@ def download_csv(dir_path,province_name,wait,driver):
   old_filepath = os.path.join(dir_path,'export.csv')# This is where the downloaded save
   new_filepath = os.path.join(dir_path,f'meteostat_dataset_{province_name}.csv')# This is where and new name we want to save it
   #Find download button
-  download_but = wait.until(EC.presence_of_element_located((By.XPATH,'//*[@id="app"]/div/main/div/div/div/div[1]/div[1]/div[1]/button[1]')))
+  download_but = WebDriverWait(driver, 50).until(EC.presence_of_element_located((By.XPATH,'//*[@id="app"]/div/main/div/div/div/div[1]/div[1]/div[1]/button[1]')))
   if(download_but.is_enabled()):
     driver.execute_script("arguments[0].click();", download_but)# click on download button
     csv_button = wait.until(EC.element_to_be_clickable((By.XPATH,'//*[@id="formatSelect"]/option[4]')))# Choose csv as file format
@@ -85,7 +81,7 @@ def download_csv(dir_path,province_name,wait,driver):
     #Wait until the file is downloaded
     while not os.path.exists(old_filepath):
       print('Wait until file is download!!!')
-      time.sleep(5)
+      time.sleep(2)
     #Rename the file
     shutil.copy(old_filepath,new_filepath)
     os.remove(old_filepath)
@@ -129,7 +125,7 @@ def crawl_meteostat_data(province_name, days):
     search_url = 'https://meteostat.net/en/'
     driver.get(search_url)  # Get the website
     while remain_days > 0 and (continual_error<2):#Loop until we get all days of data
-      print('Number of countinual error:',continual_error,"\tNumber of Unsearchable times:",num_unsearchable)
+      print('Number of countinual error:',continual_error)
       print("Remain days:", remain_days)
       try:#we may get error, when it does we need to start again
           if not ran:#If this is the first time we access https://meteostat.net/en/ in a specific way of searching
@@ -193,6 +189,11 @@ def crawl_meteostat_data(province_name, days):
     if remain_days <=0:
       # success=True #mark that we succeed
       break
-  time.sleep(5)
+  time.sleep(2)
   merge_csv(unidecode.unidecode(province_name).lower().replace(" ", ""))# merge all csv file belonged to the same province after we search
-crawl_meteostat_data(province_name,days)# crawl 20 years = 7305 days
+
+crawl_meteostat_data(province_name,days)
+
+# if os.path.exists(f'{dir_path}/meteostat_dataset_{unidecode.unidecode(province_name).lower().replace(" ", "")}.csv'):
+#   with open("Meteostat_searchable_province.txt", "a") as file:
+#     file.write(f"'{unidecode.unidecode(province_name).lower().replace(" ", "")}'\n")

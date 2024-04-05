@@ -10,3 +10,4 @@ update
 argparse
 unidecode
 pandas
+pymongo
