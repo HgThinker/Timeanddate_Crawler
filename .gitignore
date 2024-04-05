@@ -1,0 +1,25 @@
+# egg file
+loss_nli.egg-info
+loss_nli-0.1.0-py3.11.egg
+
+# data folder
+/data/
+/data_tokenized/
+/src/loss_nli/data/__pycache__/
+
+# model folder
+/model/
+
+# notebook folder
+notebooks/
+
+# build folder
+build/
+
+dist/
+
+# wandb folder
+/wandb/
+
+#timeanddate_crawler bulder folder
+/src/timeanddate_crawler.egg-info
