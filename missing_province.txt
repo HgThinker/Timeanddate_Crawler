@@ -1,8 +1,6 @@
-haiduong
 bacgiang
-bacninh
-langson
-phutho
-thainguyen
-tuyenquang
-yenbai
+backan
+hue
+vungtau
+hungyen
+sonla
