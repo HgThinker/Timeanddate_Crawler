@@ -16,7 +16,7 @@ if [ -r "$file" ]; then
    while IFS= read -r line; do
       # Process each line individually (for example, print it)
    province=$(echo "$line" | sed -e 's/[^[:print:]]//g') #Remember to remove all hidden part of the line
-   python src/Meteostat_crawler.py --province_name=$province --days=1  
+   python src/Meteostat_crawler.py --province_name=$province --days=1 #Crawl province data with the max duration is 1 day 
    done <<< "$content"
 else
    echo "Error: Unable to read file $file"
