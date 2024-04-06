@@ -9,7 +9,7 @@ python template.py
 
 file="missing_province.txt"
 
-Check if the file exists
+# Check if the file exists
 if [ -r "$file" ]; then
     # Read each line from the file and pass it to the Python script
    content=$(<"$file")
