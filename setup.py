@@ -11,9 +11,9 @@ with open('requirements.txt', encoding='utf-8') as f:
     reqs = f.readlines()
 
 setup(
-    name = 'timeanddate_crawler',
+    name = 'weather_website_crawler',
     version='0.1.0',
-    description='Timeanddate.com data crawler',
+    description='Weather websites data crawler',
     long_description='readme',
     python_requires='>=3.9',
     package_dir={"": "src"},

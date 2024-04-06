@@ -1,0 +1,20 @@
+Metadata-Version: 2.1
+Name: weather_website_crawler
+Version: 0.1.0
+Summary: Weather websites data crawler
+Requires-Python: >=3.9
+Requires-Dist: chromedriver-py==94.0.4606.41
+Requires-Dist: selenium
+Requires-Dist: requests
+Requires-Dist: setuptools
+Requires-Dist: pillow
+Requires-Dist: beautifulsoup4
+Requires-Dist: webdriver-manager
+Requires-Dist: chromedriver-autoinstaller
+Requires-Dist: update
+Requires-Dist: argparse
+Requires-Dist: unidecode
+Requires-Dist: pandas
+Requires-Dist: pymongo
+
+readme

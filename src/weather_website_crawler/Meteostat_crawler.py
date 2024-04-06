@@ -39,7 +39,7 @@ days = args.days
 
 
 pd.set_option("display.width",None)
-dir_path = os.path.join(os.getcwd(),'data/Meteostat')
+dir_path = os.path.join(os.getcwd(),'data/meteostat/un_preprocessed')
 os.chdir(dir_path)
 
 
@@ -97,9 +97,6 @@ def merge_csv(province_name):
     for csv_file in csv_files:# Remove all file we found
       os.remove(csv_file)
     df_csv_concat.to_csv(f'{dir_path}/meteostat_dataset_{province_name}.csv')
-  # elif len(csv_files)==1:# If only 1 file, just rename it
-  #   shutil.copyfile(csv_files[0],f'{dir_path}/meteostat_dataset_{province_name}.csv')
-  #   os.remove(csv_files[0])
   else: # If there is no file, return 
     return
 
@@ -124,7 +121,7 @@ def crawl_meteostat_data(province_name, days):
     driver,wait = Initialize_driver()#Innitial driver
     search_url = 'https://meteostat.net/en/'
     driver.get(search_url)  # Get the website
-    while remain_days > 0 and (continual_error<2):#Loop until we get all days of data
+    while remain_days > 0 and (continual_error<3):#Loop until we get all days of data
       print('Number of countinual error:',continual_error)
       print("Remain days:", remain_days)
       try:#we may get error, when it does we need to start again

@@ -1,0 +1,13 @@
+chromedriver-py==94.0.4606.41
+selenium
+requests
+setuptools
+pillow
+beautifulsoup4
+webdriver-manager
+chromedriver-autoinstaller
+update
+argparse
+unidecode
+pandas
+pymongo
