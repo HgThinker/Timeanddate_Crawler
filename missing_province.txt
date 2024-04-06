@@ -4,11 +4,3 @@ hue
 vungtau
 hungyen
 sonla
-haiduong
-bacgiang
-bacninh
-langson
-phutho
-thainguyen
-tuyenquang
-yenbai
