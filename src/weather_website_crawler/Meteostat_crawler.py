@@ -34,6 +34,7 @@ print(sys.executable)
 parser.add_argument('--province_name', type=str, required=True)# Province name to search
 parser.add_argument('--days', type=int, required=True)# Days to search
 args = parser.parse_args()
+extension_path = os.path.join(os.getcwd(),'Extension')
 province_name = preprocess_province_name(args.province_name)
 days = args.days
 
@@ -42,17 +43,17 @@ pd.set_option("display.width",None)
 dir_path = os.path.join(os.getcwd(),'data/meteostat/un_preprocessed')
 os.chdir(dir_path)
 
-
 def Initialize_driver():
   chrome_options = webdriver.ChromeOptions()
   chrome_options.add_argument("--no-sandbox")
-  chrome_options.add_argument("--headless")
+  chrome_options.add_argument("--headless=new")
   chrome_options.add_argument("--disable-gpu")
   chrome_options.add_argument("--start-maximized")
   chrome_options.add_argument("--disable-infobars")
-  chrome_options.add_argument("--disable-extensions")
+  # chrome_options.add_argument("--disable-extensions")
   chrome_options.add_argument('--log-level=3')
   chrome_options.set_capability("browserVersion", "117")
+  chrome_options.add_extension(os.path.join(extension_path,"AdBlock.crx"))
   chrome_options.add_experimental_option("excludeSwitches", ["enable-logging"])
   chrome_options.add_experimental_option("prefs", {
         "download.default_directory": os.path.abspath(dir_path),
