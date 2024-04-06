@@ -122,7 +122,7 @@ def crawl_meteostat_data(province_name, days):
     driver,wait = Initialize_driver()#Innitial driver
     search_url = 'https://meteostat.net/en/'
     driver.get(search_url)  # Get the website
-    while remain_days > 0 and (continual_error<3):#Loop until we get all days of data
+    while remain_days > 0 and (continual_error<10):#Loop until we get all days of data
       print('Number of countinual error:',continual_error)
       print("Remain days:", remain_days)
       try:#we may get error, when it does we need to start again
