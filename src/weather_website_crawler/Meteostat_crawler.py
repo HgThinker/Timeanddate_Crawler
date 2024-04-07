@@ -184,6 +184,8 @@ def crawl_meteostat_data(province_name, days):
           print(f"{type(err).__name__} was raised!!!")#print the error
           start_date = hold_date
           continual_error+=1
+          driver.close()
+          driver.quit()
     if remain_days <=0:
       # success=True #mark that we succeed
       break
