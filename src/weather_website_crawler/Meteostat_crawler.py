@@ -120,7 +120,7 @@ def crawl_meteostat_data(province_name, days):
     # The maximum of every search is about 10 years
     # Show if we search more than 10 years, we need to search more than 1 time
     remain_days = days# The day remain after every time we search
-    while remain_days > 0 and (continual_error<10):#Loop until we get all days of data
+    while remain_days > 0 and (continual_error<5):#Loop until we get all days of data
       print('Number of countinual error:',continual_error)
       print("Remain days:", remain_days)
       try:#we may get error, when it does we need to start again
@@ -183,6 +183,7 @@ def crawl_meteostat_data(province_name, days):
           print(f"{type(err).__name__} was raised!!!")#print the error
           start_date = hold_date
           continual_error+=1
+          time.sleep(5)
     if remain_days <=0:
       # success=True #mark that we succeed
       break
