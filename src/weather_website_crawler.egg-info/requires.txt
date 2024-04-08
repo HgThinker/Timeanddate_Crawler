@@ -11,3 +11,4 @@ argparse
 unidecode
 pandas
 pymongo
+selenium-stealth

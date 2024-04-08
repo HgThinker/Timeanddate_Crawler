@@ -16,5 +16,6 @@ Requires-Dist: argparse
 Requires-Dist: unidecode
 Requires-Dist: pandas
 Requires-Dist: pymongo
+Requires-Dist: selenium-stealth
 
 readme
