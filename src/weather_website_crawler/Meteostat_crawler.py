@@ -176,10 +176,7 @@ def crawl_meteostat_data(province_name, days):
           driver.get(new_page_url) # access the result website
           print(driver.current_url)
           wait.until(EC.element_to_be_clickable((By.XPATH,"//*[@id='cookieModal']/div/div/div[3]/button[1]"))).click()#Click the reject cookie button
-          time.sleep(2)
-          province_name_type=unidecode.unidecode(province_name_type).lower().replace(" ", "")#remove space from province_name_type
-          download_csv(dir_path,f'{province_name_type}-{remain_days}',wait,driver)# Download the result csv file
-          hold_date = start_date
+          print("Reject Cookie clicked!")
           continual_error=0
           remain_days-= 7 #update the remain_days after we search
       except Exception as err:
