@@ -148,6 +148,7 @@ def crawl_meteostat_data(province_name, days):
               if preprocessed_result == new_province_name or preprocessed_result == new_province_name+'city' :
                 driver.execute_script("arguments[0].click();", result)
                 print("Result clicked!!")
+                time.sleep(5)
                 found_province=True
                 break
             if not found_province:
