@@ -155,7 +155,8 @@ def crawl_meteostat_data(province_name, days):
               break
             if(driver.current_url=='https://meteostat.net/en/#google_vignette' or driver.current_url=='https://meteostat.net/en/'):
               print('Ad block! Run from the begining!!!')
-              driver.get(search_url) 
+              driver.close()
+              driver.quit() 
               continue
             end_date = date.today()#So the end day would be today
             ran =True
@@ -184,8 +185,6 @@ def crawl_meteostat_data(province_name, days):
           print(f"{type(err).__name__} was raised!!!")#print the error
           start_date = hold_date
           continual_error+=1
-          driver.close()
-          driver.quit()
     if remain_days <=0:
       # success=True #mark that we succeed
       break
