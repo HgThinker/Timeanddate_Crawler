@@ -165,6 +165,7 @@ def crawl_meteostat_data(province_name, days):
             end_date = start_date - timedelta(days=1)# If this is not the first time, the end_date is to continue the last start day we searched
           #The search range is 7 days or less
           start_date = end_date - timedelta(days=min(7,remain_days)-1)
+          hold_date = end_date
           print("From ",start_date,"to ",end_date )
           new_page_url = driver.current_url.split('?')[0]+f'?t={start_date}/{end_date}'
           if 'vn'not in new_page_url: break
