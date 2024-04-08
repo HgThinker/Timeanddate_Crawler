@@ -182,8 +182,11 @@ def crawl_meteostat_data(province_name, days):
       except Exception as err:
           print(f"{type(err).__name__} was raised!!!")#print the error
           start_date = hold_date
-          continual_error+=1
-          time.sleep(5)
+          if type(err).__name__ == 'MaxRetryError':
+            time.sleep(20)
+          else:
+            continual_error+=1
+            time.sleep(2)
     if remain_days <=0:
       # success=True #mark that we succeed
       break
