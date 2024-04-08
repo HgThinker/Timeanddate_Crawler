@@ -11,6 +11,8 @@ import glob
 import unidecode
 import argparse
 import sys
+from selenium_stealth import stealth
+import random
 
 def preprocess_province_name(province_name):
     provinces=["An Giang", "Bắc Giang", "Bắc Kạn", "Bạc Liêu", "Bắc Ninh", "Vũng Tàu", 
@@ -44,6 +46,20 @@ dir_path = os.path.join(os.getcwd(),'data/meteostat/un_preprocessed')
 os.chdir(dir_path)
 
 def Initialize_driver():
+  user_agents = [
+    # Add your list of user agents here
+    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36',
+    'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36',
+    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36',
+    'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36',
+    'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36',
+    'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.1 Safari/605.1.15',
+    'Mozilla/5.0 (Macintosh; Intel Mac OS X 13_1) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.1 Safari/605.1.15',
+  ]
+
+  # select random user agent
+  user_agent = random.choice(user_agents)
+
   chrome_options = webdriver.ChromeOptions()
   chrome_options.add_argument("--no-sandbox")
   chrome_options.add_argument("--headless=new")
@@ -63,7 +79,15 @@ def Initialize_driver():
         # "safebrowsing.enabled": False
         })
   chrome_options.add_argument("--window-size=1366x768") # this should be your screen size
+  chrome_options.add_argument(f'user-agent={user_agent}')
   driver = webdriver.Chrome(options=chrome_options)
+  stealth(driver,
+        languages=["en-US", "en"],
+        vendor="Google Inc.",
+        platform="Win32",
+        webgl_vendor="Intel Inc.",
+        renderer="Intel Iris OpenGL Engine",
+        fix_hairline=True)
   wait = WebDriverWait(driver, 20)
   driver.implicitly_wait(20)
   return driver,wait
