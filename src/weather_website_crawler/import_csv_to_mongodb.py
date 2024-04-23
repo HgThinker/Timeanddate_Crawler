@@ -38,6 +38,6 @@ for filename in os.listdir(dir_path):
                     collection.insert_one(row)
                 except pymongo.errors.DuplicateKeyError:
                     print(f"{row['Time']} is a duplicate and was not inserted!!")
-        print(f"CSV data from '{filename}.csv' imported into collection '{collection_name}'.")
+        print(f"CSV data from '{filename}' imported into collection '{collection_name}'.")
 # Close MongoDB connection
 client.close()

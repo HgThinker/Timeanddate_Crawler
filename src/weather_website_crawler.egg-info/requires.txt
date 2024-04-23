@@ -12,3 +12,4 @@ unidecode
 pandas
 pymongo
 selenium-stealth
+apache-airflow

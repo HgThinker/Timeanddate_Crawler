@@ -17,5 +17,6 @@ Requires-Dist: unidecode
 Requires-Dist: pandas
 Requires-Dist: pymongo
 Requires-Dist: selenium-stealth
+Requires-Dist: apache-airflow
 
 readme

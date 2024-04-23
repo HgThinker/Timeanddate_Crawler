@@ -20,3 +20,5 @@ dist/
 
 #egg folder
 /src/timeanddate_crawler.egg-info
+#
+Airflow

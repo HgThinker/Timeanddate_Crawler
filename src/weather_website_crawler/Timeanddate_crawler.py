@@ -58,9 +58,6 @@ chrome_options.add_argument('log-level=3')
 chrome_options.add_argument('--ignore-certificate-errors')
 chrome_options.add_argument('--ignore-ssl-errors')
 chrome_options.add_argument(f"--user-agent={my_user_agent}")
-chrome_options.add_argument("--lang=en-US")
-chrome_options.add_experimental_option('prefs', {'intl.accept_languages': 'en,en_US'})
-
 driver = webdriver.Chrome(options=chrome_options)
 stealth(driver,
         languages=["en-US", "en"],
@@ -79,11 +76,7 @@ print("Crawling:",preprocess_province_name(province_name=province_name))
 print("Link:", driver.current_url)
 dataset = pd.DataFrame()
 #Initialize dataframe
-if os.path.exists(csv_path):
-  dataset = pd.read_csv(csv_path, index_col=0)
-else:
-  dataset = pd.DataFrame(columns = ['Year','Date','Time', 'Temp', 'Weather', 'Wind_speed','Wind_direct', 'Humidity', 'Barometer', 'Visibility'])
-  dataset.loc[len(dataset)]=['','','', '°F', '', 'mph','', '%', 'Hg', 'mi']
+dataset = pd.DataFrame(columns = ['Year','Date','Time', 'Temp', 'Weather', 'Wind_speed','Wind_direct', 'Humidity', 'Barometer', 'Visibility'])
 
 #START CRAWLING
 # select MONTH dropdown
@@ -95,7 +88,7 @@ count_days = 0
 ran = False
 while True:
   try:
-    time.sleep(10)
+    time.sleep(5)
     # print("current_month_index: ", current_month_index)
     ele_month = driver.find_element(By.ID,'month')
     select_month = Select(ele_month)
@@ -130,32 +123,35 @@ while True:
         detail_list = [current_month_name.split()[1], day_name.split(', ')[0]]
         count=0
         if count_row==7:# if it is the first hours, It is a special case
-          detail_list.append(children[0].text.replace('°F','').replace('mph','').replace('\"Hg','').replace('%','')[:8])# cut off the first data
+          detail_list.append(children[0].text.replace('°C','').replace('°','').replace('mph','').replace('mbar','').replace('km','').replace('%','').replace('/h','')[:5])# cut off the first data
           for children_index in range(1,len(children)):#Get the left over data
             if children_index == 5:
-              detail_list.append(children[children_index].find_element(By.XPATH, "./*").get_attribute('title').split()[3])
+              detail_list.append(children[children_index].find_element(By.XPATH, "./*").get_attribute('title').split()[3])        
+            elif children_index == 1 :
+              continue
             else:
-              detail_list.append(children[children_index].text.replace('°F','').replace('mph','').replace('\"Hg','').replace('%',''))
-
+              detail_list.append(children[children_index].text.replace('°C','').replace('°','').replace('mph','').replace('mbar','').replace('km','').replace('%','').replace('/h',''))
         else:
           for children_index in range(0,len(children)):#Get all data of hour
             if children_index == 5:
               detail_list.append(children[children_index].find_element(By.XPATH, "./*").get_attribute('title').split()[3])
+            elif children_index == 1 :
+              continue
             else:
-              detail_list.append(children[children_index].text.replace('°F','').replace('mph','').replace('\"Hg','').replace('%',''))
+              detail_list.append(children[children_index].text.replace('°C','').replace('°','').replace('mph','').replace('mbar','').replace('km','').replace('%','').replace('/h',''))
         print(detail_list)
-        dataset.loc[len(dataset)] = detail_list#Add new row to dataset
+        dataset.loc[len(dataset)] = detail_list
+        # dataset = dataset.append(pd.Series(detail_list, index=dataset.columns[:len(detail_list)]), ignore_index=True)
         count_row+=1
-        if count_row % 5 ==0:
-          dataset=dataset.drop_duplicates()
-          dataset.to_csv(os.path.join(dir_path,f'timeanddate_dataset_{province_name}.csv'))
       count_days+=1
       if(count_days == days):
-        print("Finished crawling!!!")
+        # os.remove(os.path.join(dir_path,f'timeanddate_dataset_{province_name}.csv'))
+        dataset.to_csv(os.path.join(dir_path,f'timeanddate_dataset_{province_name}.csv'),mode='w',index=False)
+        print(f"Finished crawling {province_name}!!!")
         break    
     current_month_index+=1
-  except Exception as e:
-    print(e)
+  except Exception as err:
+    print(f"{type(err).__name__} was raised {err}")
     driver.get(web_url)
   if current_month_index == number_of_month or count_days == days :
     break
